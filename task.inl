@@ -32,40 +32,28 @@ constexpr void Task<T>::promise_type::unhandled_exception() const noexcept
 }
 
 template <typename T>
-constexpr bool Task<T>::awaiter::await_ready() const noexcept
+constexpr bool Task<T>::await_ready() const noexcept
 {
-    return coro.done();
+    return handle.done();
 }
 
 template <typename T>
-constexpr std::coroutine_handle<typename Task<T>::promise_type> Task<T>::awaiter::await_suspend(
+constexpr std::coroutine_handle<typename Task<T>::promise_type> Task<T>::await_suspend(
     std::coroutine_handle<typename Task<T>::promise_type> awaiting_coroutine) noexcept
 {
-    coro.promise().is_ready.wait(false);
+    handle.promise().is_ready.wait(false);
 
     return awaiting_coroutine;
 }
 
 template <typename T>
-constexpr T Task<T>::awaiter::await_resume() const noexcept
+constexpr T Task<T>::await_resume() const noexcept
 {
-    return coro.promise().data;
+    return handle.promise().data;
 }
 
 template <typename T>
 constexpr Task<T>::Task(std::coroutine_handle<promise_type> handle) : handle(handle)
 {
     sch.enqueue(handle);
-}
-
-template <typename T>
-constexpr std::coroutine_handle<typename Task<T>::promise_type> Task<T>::get_handle() const noexcept
-{
-    return handle;
-}
-
-template <typename T>
-constexpr Task<T>::awaiter Task<T>::operator co_await() const noexcept
-{
-    return {handle};
 }

@@ -19,22 +19,12 @@ struct Task
         T                data;
     };
 
-    struct awaiter
-    {
-        constexpr bool await_ready() const noexcept;
-        constexpr std::coroutine_handle<promise_type> await_suspend(std::coroutine_handle<promise_type> awaiting_coroutine) noexcept;
-        constexpr T await_resume() const noexcept;
-
-        std::coroutine_handle<promise_type> coro;
-    };
-
     constexpr Task(std::coroutine_handle<promise_type> handle);
 
-    constexpr std::coroutine_handle<promise_type> get_handle() const noexcept;
-
-    constexpr awaiter operator co_await() const noexcept;
+    constexpr bool await_ready() const noexcept;
+    constexpr std::coroutine_handle<promise_type> await_suspend(std::coroutine_handle<promise_type> awaiting_coroutine) noexcept;
+    constexpr T await_resume() const noexcept;
 
     std::coroutine_handle<promise_type> handle;
 };
-
 #include "task.inl"
