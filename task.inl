@@ -23,7 +23,7 @@ constexpr Task<T> Task<T>::promise_type::get_return_object()
 template <typename T>
 constexpr void Task<T>::promise_type::return_value(T&& value)
 {
-    data = std::move(value);
+    data = std::forward<T>(value);
 }
 
 template <typename T>
