@@ -24,5 +24,3 @@ private:
     std::condition_variable _cv;
     std::atomic<bool>       _stop{false};
 };
-
-inline Scheduler sch;

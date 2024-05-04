@@ -5,5 +5,4 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(Coro)
 
-add_executable(${PROJECT_NAME} main.cpp scheduler.hpp scheduler.cpp task.hpp
-                               task.cpp)
+add_executable(${PROJECT_NAME} main.cpp scheduler.hpp scheduler.cpp task.hpp)

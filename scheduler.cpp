@@ -1,5 +1,8 @@
 #include "scheduler.hpp"
 
+#include <cstdio>
+#include <iostream>
+
 Scheduler::Scheduler(std::size_t num_threads)
 {
     _workers.reserve(num_threads);
@@ -12,9 +15,9 @@ Scheduler::Scheduler(std::size_t num_threads)
                 {
                     std::coroutine_handle<> task;
                     {
-                        std::unique_lock<std::mutex> lock(_mtx);
-                        _cv.wait(lock, [this] { return _stop || (!_tasks.empty()); });
-                        if (_stop)
+                        std::unique_lock lock{_mtx};
+                        _cv.wait(lock, [this] { return _stop || !_tasks.empty(); });
+                        if (_stop && _tasks.empty())
                             return;
 
                         task = _tasks.front();
@@ -38,7 +41,7 @@ Scheduler::~Scheduler()
 void Scheduler::enqueue(std::coroutine_handle<> task)
 {
     {
-        std::unique_lock<std::mutex> lock(_mtx);
+        const std::unique_lock lock{_mtx};
         _tasks.push(task);
     }
     _cv.notify_one();
